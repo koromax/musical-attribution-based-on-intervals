@@ -1,0 +1,490 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #111111;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    font-family: 'Comfortaa', sans-serif;
+    color: #efeff1;
+}
+
+.app-container {
+    width: 412px;
+    height: 915px;
+    position: relative;
+    background: #323232;
+    overflow: hidden;
+}
+
+/* КОМПОНЕНТЫ */
+.header {
+    width: 412px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.header-bg {
+    width: 100%;
+    height: 100%;
+    background: #262626;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.header-title {
+    position: absolute;
+    width: 100%;
+    top: 22px;
+    text-align: center;
+    color: #7d60ff;
+    font-size: 32px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.footer {
+    width: 412px;
+    height: 70px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #454545;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 10;
+}
+
+.nav-btn {
+    width: 120px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.nav-btn.active {
+    background: #7d60ff;
+    font-weight: 700;
+}
+
+.nav-label {
+    color: #efeff1;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.main-content {
+    position: absolute;
+    top: 80px;
+    bottom: 70px;
+    left: 0;
+    width: 412px;
+    overflow-y: auto;
+}
+
+.main-content::-webkit-scrollbar {
+    display: none;
+}
+.main-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.page-title {
+    color: #efeff1;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 20px 16px 16px 16px;
+}
+
+/*  ЛЕНТА  */
+.feed-layout {
+    overflow: hidden;
+}
+
+.feed-media {
+    width: 412px;
+    height: 765px;
+    position: absolute;
+    object-fit: cover;
+}
+
+.feed-body {
+    width: 412px;
+    height: 765px;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    z-index: 5;
+}
+
+/* информация */
+.info-card-bg {
+    width: 392px;
+    height: 196px;
+    position: absolute;
+    left: 10px;
+    top: 35px;
+    background: rgba(50, 50, 50, 0.67);
+    border-radius: 2px;
+    mix-blend-mode: hard-light;
+}
+
+.info-card {
+    width: 352px;
+    left: 20px;
+    right: 20px;
+    top: 20px;
+    height: 100px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.track-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #efeff1;
+}
+
+.track-interval-frequency, .track-author {
+    font-size: 16px;
+    font-weight: 300;
+    color: #efeff1;
+}
+
+/* Блок лайка */
+.btn-heart-bg {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    left: 352px;
+    top: 411px;
+    background: #454545;
+    border-radius: 2px;
+    mix-blend-mode: hard-light;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart {
+    position: relative;
+    left: 362px;
+    top: 423px;
+    width: 30px;
+    height: 30px;
+    z-index: 10;
+}
+
+.icon-heart {
+    width: 100%;
+    height: 100%;
+    stroke: #efeff1;
+    stroke-width: 2px;
+    fill: none;
+}
+
+.like-cnt {
+    position: absolute;
+    left: 363px;
+    top: 468px;
+    width: 28px;
+    height: 20px;
+    text-align: center;
+}
+
+.like-cnt-val {
+    font-size: 14px;
+    font-weight: 400;
+    color: #454545;
+}
+
+/* Стрелка вниз */
+.arrow-down {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    left: 351px;
+    top: 582px;
+    background: #454545;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    mix-blend-mode: hard-light;
+    text-decoration: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.icon-arrow {
+    width: 24px;
+    height: 24px;
+    fill: #efeff1;
+}
+
+.description {
+    position: absolute;
+    left: 30px;
+    top: 720px;
+    width: 352px;
+    height: 38px;
+    overflow: hidden;
+    mix-blend-mode: difference;
+}
+
+.description-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #efeff1;
+    line-height: 20px;
+    height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.description-show {
+    font-size: 10px;
+    font-weight: 400;
+    color: #7d60ff;
+    line-height: 16px;
+    cursor: pointer;
+}
+
+/* ЧЕРНОВИК */
+.input-section {
+    width: 380px;
+    margin: 0 auto 16px auto;
+    background: #262626;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.input-head {
+    background: #3a3a3a;
+    color: #efeff1;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.input-body-vertical {
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    gap: 14px;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-field label {
+    color: #efeff1;
+    font-size: 14px;
+}
+
+.input-field input[type="text"],
+.input-field input[type="number"],
+.input-field textarea {
+    width: 100%;
+    background: #404040;
+    border: none;
+    border-radius: 3px;
+    color: #efeff1;
+    padding: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.input-field input[type="file"] {
+    background: #404040;
+    padding: 8px;
+    border-radius: 3px;
+    color: #efeff1;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+}
+
+.input-field input[type="file"]::-webkit-file-upload-button {
+    background: #262626;
+    border: none;
+    color: #efeff1;
+    padding: 6px 12px;
+    border-radius: 2px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.save-btn-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 30px 0;
+}
+
+.save-btn {
+    width: 180px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    background: #7d60ff;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.save-btn-text {
+    color: #efeff1;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* ПЛИТКА */
+.filter-section {
+    width: 380px;
+    margin: 0 auto 16px auto;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.filter-head {
+    background: #3a3a3a;
+    color: #efeff1;
+    font-size: 15px;
+    line-height: 1.25;
+    padding: 12px 14px;
+    font-weight: 400;
+}
+
+.filter-body {
+    background: #262626;
+    display: flex;
+    gap: 16px;
+    padding: 14px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+}
+
+.input-label {
+    color: #efeff1;
+    font-size: 14px;
+}
+
+.filter-input {
+    width: 100%;
+    height: 36px;
+    background: #404040;
+    border: none;
+    border-radius: 3px;
+    color: #efeff1;
+    padding: 0 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.filter-input::-webkit-outer-spin-button,
+.filter-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.filter-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.grid-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 180px);
+    justify-content: space-between;
+    padding: 0 16px 20px 16px;
+    gap: 16px;
+}
+
+.grid-card {
+    width: 180px;
+    background: #424242;
+    border-radius: 4px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.card-picture {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 2px;
+    background: #666;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card-title {
+    color: #efeff1;
+    font-size: 14px;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-freq {
+    color: #efeff1;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.card-likes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.like-val {
+    color: #efeff1;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.no-items {
+    grid-column: 1 / -1;
+    color: #a0a0a0;
+    text-align: center;
+    padding: 40px 0;
+    font-size: 14px;
+}

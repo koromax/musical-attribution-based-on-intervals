@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Черновик - Анализатор</title>
+    <link rel="stylesheet" href="/static/styles/style.css">
+</head>
+
+<body>
+<div class="app-container">
+
+  <header class="header">
+    <div class="header-bg"></div>
+    <div class="header-title">Анализатор</div>
+  </header>
+
+  <main class="main-content">
+    <div class="page-title">Черновик</div>
+
+    <form class="draft-form" action="/draft" method="POST">
+
+    <div class="input-section">
+    <div class="input-head">Заголовки</div>
+    <div class="input-body-vertical">
+        <div class="input-field">
+        <label>Название композиции</label>
+        <input type="text" name="title" value="{{ .item.Title }}">
+        </div>
+        <div class="input-field">
+        <label>Описание</label>
+        <textarea name="description" rows="3">{{ .item.Description }}</textarea>
+        </div>
+    </div>
+    </div>
+
+    <div class="input-section">
+        <div class="input-head">Загрузка медиа</div>
+        <div class="input-body-vertical">
+          <div class="input-field">
+            <label>Изображение</label>
+            <input type="file" name="image" accept="image/*">
+          </div>
+          <div class="input-field">
+            <label>Видео</label>
+            <input type="file" name="video" accept="video/*">
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-head">Поля по теме</div>
+        <div class="input-body-vertical">
+          <div class="input-field">
+            <label>Частота доминирующего интервала (%)</label>
+            <input type="number" step="0.1" name="interval_frequency" value="{{ .item.IntervalFrequency }}" placeholder="38.5">
+          </div>
+          <div class="input-field">
+            <label>Предполагаемый автор</label>
+            <input type="text" name="attributed_author" value="{{ .item.AttributedAuthor }}" placeholder="И. С. Бах">
+          </div>
+        </div>
+      </div>
+
+      <div class="save-btn-container">
+        <button type="submit" class="save-btn">
+            <div class="save-btn-text">Сохранить</div>
+        </button>
+      </div>
+
+      <!-- <button type="submit" class="nav-btn">Сохранить</button> -->
+    </form>
+  </main>
+
+  <footer class="footer">
+    <a href="/feed" class="nav-btn">
+      <span class="nav-label">Лента</span>
+    </a>
+    <a href="/draft" class="nav-btn active">
+      <span class="nav-label">Добавление</span>
+    </a>
+    <a href="/grid" class="nav-btn">
+      <span class="nav-label">Плитка</span>
+    </a>
+  </footer>
+
+</div>
+</body>
+</html>
