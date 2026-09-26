@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;700&display=swap');
 
+:root {
+    --bg: #323232;
+    --bg-lighter: #454545;
+    --bg-darker: #262626;
+    --accent: #7D60FF;
+    --text: #EFEFF1;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -13,14 +21,14 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Comfortaa', sans-serif;
-    color: #efeff1;
+    color: var(--text);
 }
 
 .app-container {
     width: 412px;
     height: 915px;
     position: relative;
-    background: #323232;
+    background: var(--bg);
     overflow: hidden;
 }
 
@@ -37,7 +45,7 @@ body {
 .header-bg {
     width: 100%;
     height: 100%;
-    background: #262626;
+    background: var(--bg-darker);
     position: absolute;
     top: 0;
     left: 0;
@@ -48,7 +56,7 @@ body {
     width: 100%;
     top: 22px;
     text-align: center;
-    color: #7d60ff;
+    color: var(--accent);
     font-size: 32px;
     font-weight: 400;
     margin: 0;
@@ -60,7 +68,7 @@ body {
     position: absolute;
     bottom: 0;
     left: 0;
-    background: #454545;
+    background: var(--bg-lighter);
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -78,12 +86,12 @@ body {
 }
 
 .nav-btn.active {
-    background: #7d60ff;
+    background: var(--accent);
     font-weight: 700;
 }
 
 .nav-label {
-    color: #efeff1;
+    color: var(--text);
     font-size: 14px;
     font-weight: 400;
 }
@@ -106,7 +114,7 @@ body {
 }
 
 .page-title {
-    color: #efeff1;
+    color: var(--text);
     font-size: 24px;
     font-weight: 700;
     padding: 20px 16px 16px 16px;
@@ -151,7 +159,7 @@ body {
 .square-bg {
     width: 50px;
     height: 50px;
-    background: #454545;
+    background: var(--bg-lighter);
     border-radius: 2px;
     mix-blend-mode: hard-light;
     display: flex;
@@ -179,7 +187,7 @@ body {
     height: 20px;
     font-size: 14px;
     font-weight: 400;
-    color: #454545;
+    color: var(--bg-lighter);
     text-align: center;
     line-height: 20px;
 }
@@ -188,7 +196,7 @@ body {
     width: 50px;
     font-size: 16px;
     font-weight: 400;
-    color: #efeff1;
+    color: var(--text);
     text-align: center;
 }
 
@@ -213,7 +221,7 @@ body {
     height: 30px;
     z-index: 10;
 
-    stroke: #efeff1;
+    stroke: var(--text);
     stroke-width: 2px;
     fill: none;
 }
@@ -225,7 +233,7 @@ body {
     font-size: 14px;
     font-weight: 600;
     text-align: center;
-    color: #454545;
+    color: var(--bg-lighter);
     mix-blend-mode: normal;
 }
 
@@ -238,7 +246,7 @@ body {
 .icon-arrow {
     width: 24px;
     height: 24px;
-    fill: #efeff1;
+    fill: var(--text);
 }
 
 /* информация */
@@ -270,7 +278,7 @@ body {
     height: 68px;
     font-size: 32px;
     font-weight: 700;
-    color: #efeff1;
+    color: var(--text);
     display: flex;
     mix-blend-mode: difference;
 }
@@ -294,7 +302,7 @@ body {
 
     font-size: 14px;
     font-weight: 400;
-    color: #efeff1;
+    color: var(--text);
     line-height: 20px;
     white-space: nowrap;
     overflow: hidden;
@@ -308,7 +316,7 @@ body {
 
     font-size: 10px;
     font-weight: 400;
-    color: #7d60ff;
+    color: var(--accent);
     line-height: 16px;
     cursor: pointer;
     align-self: flex-bottom;
@@ -316,48 +324,92 @@ body {
 
 
 /* ЧЕРНОВИК */
+.main-content.draft {
+    padding: 30px;
+}
+
 .input-section {
-    width: 380px;
+    width: fill;
     margin: 0 auto 16px auto;
-    background: #262626;
+    background: var(--bg-darker);
     border-radius: 2px;
     overflow: hidden;
 }
 
 .input-head {
     background: #3a3a3a;
-    color: #efeff1;
+    color: var(--text);
     padding: 12px 14px;
     font-size: 14px;
     font-weight: 400;
 }
 
-.input-body-vertical {
+.input-body {
+    background: var(--bg-darker);
+    width: 352px;
     display: flex;
     flex-direction: column;
     padding: 14px;
     gap: 14px;
 }
 
-.input-field {
+.input-body.media-preview {
+    height: 190px;
+    padding: 20px 30px;
+    flex-direction: row;
+    gap: 67px;
+}
+
+.card-picture.preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 2px;
+    background: var(--bg-lighter);
+    align-items: center;
+}
+
+.feed-media.preview {
+    width: 75px;
+    height: 150px;
+    object-fit: cover;
+    position: static;
+    background: var(--bg-lighter);
+}
+
+.input-body-vertical {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+}
+
+.input-field {
+    background: var(--bg-darker);
+    display: flex;
+    flex-direction: column;
+    padding: 17px 15px 10px;
+    gap: 4px;
+}
+
+.input-field textarea {
+    resize: none;
+    field-sizing: content;
+    overflow: hidden;
 }
 
 .input-field label {
-    color: #efeff1;
-    font-size: 14px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 300;
 }
 
 .input-field input[type="text"],
 .input-field input[type="number"],
 .input-field textarea {
     width: 100%;
-    background: #404040;
+    background: var(--bg-lighter);
     border: none;
     border-radius: 3px;
-    color: #efeff1;
+    color: var(--text);
     padding: 10px;
     font-size: 14px;
     font-family: inherit;
@@ -368,16 +420,16 @@ body {
     background: #404040;
     padding: 8px;
     border-radius: 3px;
-    color: #efeff1;
+    color: var(--text);
     font-size: 12px;
     cursor: pointer;
     border: none;
 }
 
 .input-field input[type="file"]::-webkit-file-upload-button {
-    background: #262626;
+    background: var(--bg-darker);
     border: none;
-    color: #efeff1;
+    color: var(--text);
     padding: 6px 12px;
     border-radius: 2px;
     margin-right: 10px;
@@ -398,14 +450,14 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 2px;
-    background: #7d60ff;
+    background: var(--accent);
     border: none;
     cursor: pointer;
     text-decoration: none;
 }
 
 .save-btn-text {
-    color: #efeff1;
+    color: var(--text);
     font-size: 14px;
     font-weight: 400;
 }
@@ -420,7 +472,7 @@ body {
 
 .filter-head {
     background: #3a3a3a;
-    color: #efeff1;
+    color: var(--text);
     font-size: 15px;
     line-height: 1.25;
     padding: 12px 14px;
@@ -428,7 +480,7 @@ body {
 }
 
 .filter-body {
-    background: #262626;
+    background: var(--bg-darker);
     display: flex;
     gap: 16px;
     padding: 14px;
@@ -442,7 +494,7 @@ body {
 }
 
 .input-label {
-    color: #efeff1;
+    color: var(--text);
     font-size: 14px;
 }
 
@@ -452,7 +504,7 @@ body {
     background: #404040;
     border: none;
     border-radius: 3px;
-    color: #efeff1;
+    color: var(--text);
     padding: 0 10px;
     font-size: 14px;
     outline: none;
@@ -501,7 +553,7 @@ body {
 }
 
 .card-title {
-    color: #efeff1;
+    color: var(--text);
     font-size: 14px;
     font-weight: 400;
     white-space: nowrap;
@@ -510,7 +562,7 @@ body {
 }
 
 .card-freq {
-    color: #efeff1;
+    color: var(--text);
     font-size: 14px;
     font-weight: 400;
 }
@@ -523,7 +575,7 @@ body {
 }
 
 .like-val {
-    color: #efeff1;
+    color: var(--text);
     font-size: 14px;
     font-weight: 400;
 }

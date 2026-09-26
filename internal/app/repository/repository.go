@@ -50,7 +50,7 @@ func NewRepository() *Repository {
 				ID:          3,
 				Name:        "Новый композитор",
 				Description: "Черновик.",
-				ImageURL:    "",
+				ImageURL:    "http://localhost:9000/music/cover3.jpg",
 				VideoURL:    "http://localhost:9000/music/3.mp4",
 				Status:      "draft",
 				Likes:       []int{},
