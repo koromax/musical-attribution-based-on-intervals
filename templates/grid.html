@@ -11,36 +11,47 @@
 
   <header class="header">
     <div class="header-bg"></div>
-    <div class="header-title">Анализатор</div>
+    <div class="header-title">Композиторы</div>
   </header>
 
-  <main class="main-content">
+  <main class="main-content grid">
     <div class="page-title">Запросы</div>
 
     <form class="filter-section" action="/grid" method="GET">
     <div class="filter-head">
         Фильтр частоты доминирующего<br>интервала
     </div>
+    
     <div class="filter-body">
-        <div class="input-group">
-        <label class="input-label">от</label>
-        <input type="number" step="0.1" name="query" value="{{ .query }}" class="filter-input" placeholder="0">
+        <!-- Static labels showing current backend state -->
+        <div class="slider-container">
+        
+        <div class="slider-labels">
+            <span class="slider-label">{{ if .query }}{{ .query }}{{ else }}0{{ end }}</span>
+            <span class="slider-label">{{ if .max_query }}{{ .max_query }}{{ else }}100{{ end }}</span>
         </div>
-        <div class="input-group">
-        <label class="input-label">до</label>
-        <input type="number" step="0.1" name="max_query" value="{{ .max_query }}" class="filter-input" placeholder="100">
+
+        <div class="slider-track-container">
+            <div class="slider-track"></div>
+            <input type="range" step="0.1" min="0" max="100" name="query" value="{{ if .query }}{{ .query }}{{ else }}0{{ end }}" class="range-input">
+            <input type="range" step="0.1" min="0" max="100" name="max_query" value="{{ if .max_query }}{{ .max_query }}{{ else }}100{{ end }}" class="range-input">
         </div>
+        </div>
+        
+        <!-- <div class="nav-btn secondary">Применить</div> -->
+        
+        <!-- Mandatory Submit Button for JS-free forms -->
+        <button type="submit" class="apply-btn">Применить</button>
     </div>
-    <button type="submit" style="display: none;"></button>
     </form>
 
     <div class="grid-cards">
     {{ range .items }}
     <a href="/feed/{{ .ID }}" class="grid-card">
-        <img class="card-picture" src="{{ .ImageURL }}" alt="{{ .Title }}" />
+        <img class="card-picture" src="{{ .ImageURL }}" alt="{{ .Name }}" />
         <div class="card-info">
-        <div class="card-title">{{ .Title }}</div>
-        <div class="card-freq">Частота: {{ .IntervalFrequency }}%</div>
+        <div class="card-title">{{ .Name }}</div>
+        <div class="card-freq">Частотность: {{ .Freq1 }}</div>
         <div class="card-likes">
             <svg class="like-icon" width="20" height="18" viewBox="0 0 30 27" fill="none">
             <path d="M8.75 1.43C6.83 1.43 4.9 2.06 3.44 3.56C0.5 6.56 0.59 11.18 3.44 14.18L13.55 24.89C14.33 25.73 15.67 25.73 16.45 24.89L26.56 14.18C29.41 11.18 29.49 6.56 26.56 3.56C23.63 0.68 18.87 0.68 15.94 3.56C15.43 4.1 14.57 4.1 14.06 3.56C12.6 2.06 10.67 1.43 8.75 1.43Z" stroke="#EFEFF1" stroke-width="2.5"/>
