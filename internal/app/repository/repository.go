@@ -2,80 +2,84 @@ package repository
 
 import "fmt"
 
-type Composition struct {
-	ID                int     `json:"id"`
-	Title             string  `json:"title"`
-	Description       string  `json:"description"`
-	ImageURL          string  `json:"image_url"`
-	VideoURL          string  `json:"video_url"`
-	Status            string  `json:"status"`
-	LikesCount        int     `json:"likes_count"`
-	IntervalFrequency float64 `json:"interval_frequency"`
-	AttributedAuthor  string  `json:"attributed_author"`
+type Composer struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	ImageURL    string  `json:"image_url"`
+	VideoURL    string  `json:"video_url"`
+	Status      string  `json:"status"`
+	Likes       []int   `json:"likes"`
+	LikesCount  int     `json:"likes_count"`
+	Freq1       float64 `json:"freq1"`
+	Freq2       float64 `json:"freq2"`
 }
 
 type Repository struct {
-	compositions []Composition
+	composers []Composer
 }
 
 func NewRepository() *Repository {
 	return &Repository{
-		compositions: []Composition{
+		composers: []Composer{
 			{
-				ID:                1,
-				Title:             "Токката и фуга ре минор",
-				Description:       "Высокая частотность квинты характерна для полифонии барокко.",
-				ImageURL:          "http://localhost:9000/music/cover1.jpg",
-				VideoURL:          "http://localhost:9000/music/1.mp4",
-				Status:            "published",
-				LikesCount:        142,
-				IntervalFrequency: 38.5,
-				AttributedAuthor:  "И. С. Бах",
+				ID:          1,
+				Name:        "И. С. Бах",
+				Description: "Композитор эпохи барокко.",
+				ImageURL:    "http://localhost:9000/music/cover1.jpg",
+				VideoURL:    "http://localhost:9000/music/1.mp4",
+				Status:      "published",
+				Likes:       []int{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				LikesCount:  142,
+				Freq1:       38.5,
+				Freq2:       12.4,
 			},
 			{
-				ID:                2,
-				Title:             "Ноктюрн Op. 9 No. 2",
-				Description:       "Частотный анализ интервалов гармонии периода романтизма.",
-				ImageURL:          "http://localhost:9000/music/cover2.jpg",
-				VideoURL:          "http://localhost:9000/music/2.mp4",
-				Status:            "published",
-				LikesCount:        89,
-				IntervalFrequency: 12.0,
-				AttributedAuthor:  "Ф. Шопен",
+				ID:          2,
+				Name:        "Ф. Шопен",
+				Description: "Композитор эпохи романтизма.",
+				ImageURL:    "http://localhost:9000/music/cover2.jpg",
+				VideoURL:    "http://localhost:9000/music/2.mp4",
+				Status:      "published",
+				Likes:       []int{1, 2, 3},
+				LikesCount:  89,
+				Freq1:       12.0,
+				Freq2:       7.8,
 			},
 			{
-				ID:                3,
-				Title:             "Черновик партитуры",
-				Description:       "Неоконченный анализ частотности гармонических интервалов.",
-				ImageURL:          "http://localhost:9000/music/draft_cover.jpg",
-				VideoURL:          "http://localhost:9000/music/3.mp4",
-				Status:            "draft",
-				LikesCount:        0,
-				IntervalFrequency: 25.4,
-				AttributedAuthor:  "Неизвестный автор",
+				ID:          3,
+				Name:        "Новый композитор",
+				Description: "Черновик.",
+				ImageURL:    "",
+				VideoURL:    "http://localhost:9000/music/3.mp4",
+				Status:      "draft",
+				Likes:       []int{},
+				LikesCount:  0,
+				Freq1:       25.4,
+				Freq2:       10.2,
 			},
 		},
 	}
 }
 
-func (r *Repository) GetDraft() (Composition, error) {
-	for _, item := range r.compositions {
+func (r *Repository) GetDraft() (Composer, error) {
+	for _, item := range r.composers {
 		if item.Status == "draft" {
 			return item, nil
 		}
 	}
-	return Composition{}, fmt.Errorf("черновик не найден")
+	return Composer{}, fmt.Errorf("черновик не найден")
 }
 
-func (r *Repository) GetFeedItem(id int, next bool) (Composition, error) {
-	var published []Composition
-	for _, item := range r.compositions {
+func (r *Repository) GetFeedItem(id int, next bool) (Composer, error) {
+	var published []Composer
+	for _, item := range r.composers {
 		if item.Status == "published" {
 			published = append(published, item)
 		}
 	}
 	if len(published) == 0 {
-		return Composition{}, fmt.Errorf("нет публикаций")
+		return Composer{}, fmt.Errorf("нет публикаций")
 	}
 	if id == 0 {
 		return published[0], nil
@@ -92,16 +96,16 @@ func (r *Repository) GetFeedItem(id int, next bool) (Composition, error) {
 	return published[0], nil
 }
 
-func (r *Repository) GetPublishedGrid(minFreq *float64, maxFreq *float64) []Composition {
-	var result []Composition
-	for _, item := range r.compositions {
+func (r *Repository) GetPublishedGrid(minFreq *float64, maxFreq *float64) []Composer {
+	var result []Composer
+	for _, item := range r.composers {
 		if item.Status != "published" {
 			continue
 		}
-		if minFreq != nil && item.IntervalFrequency < *minFreq {
+		if minFreq != nil && item.Freq1 < *minFreq {
 			continue
 		}
-		if maxFreq != nil && item.IntervalFrequency > *maxFreq {
+		if maxFreq != nil && item.Freq1 > *maxFreq {
 			continue
 		}
 		result = append(result, item)

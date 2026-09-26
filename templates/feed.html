@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Лента - Анализатор</title>
+    <title>Композиторы</title>
     <link rel="stylesheet" href="/static/styles/style.css">
 </head>
 <body>
@@ -10,7 +10,7 @@
 
   <header class="header">
     <div class="header-bg"></div>
-    <div class="header-title">Анализатор</div>
+    <div class="header-title">Композиторы</div>
   </header>
 
   <main class="feed-body">
@@ -22,34 +22,48 @@
   <!-- <img class="feed-media" src="/static/img/preview1.png" /> -->
 
 
-  <div class="info-card-bg">
-      <div class="info-card">
-          <div class="track-title">{{ .item.Title }}</div>
-          <div class="track-interval-frequency">Частота доминирующего интервала: {{ .item.IntervalFrequency}}</div>
-          <div class="track-author">Предполагаемый автор: {{ .item.AttributedAuthor }}</div>
-        </div>
+  <div class="sidebar">
+
+    <div class="freq-wrapper">
+      <div class="freq-field">
+        <div class="label-text">Freq 1</div>
+        <div class="square-bg text-value">{{ .item.Freq1 }}</div>
+      </div>
+      <div class="freq-field">
+        <div class="label-text">Freq 2</div>
+        <div class="square-bg text-value">{{ .item.Freq2 }}</div>
+      </div>
     </div>
 
-    <div class="btn-heart-bg"></div>
-    <div class="heart">
-        <svg width="30" height="27" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="actions-wrapper">
+      <div class="action">
+        <div class="square-bg">
+          <svg class="heart" width="30" height="27" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8.74999 1.43134C6.83062 1.43134 4.90199 2.05627 3.43749 3.55627C0.50862 6.55627 0.588995 11.1813 3.43749 14.1813L13.5456 24.8904C14.3349 25.7267 15.6651 25.7267 16.4544 24.8904L26.5625 14.1813C29.4112 11.1813 29.4912 6.55627 26.5625 3.55627C23.6337 0.681274 18.8662 0.681274 15.9375 3.55627C15.4298 4.09784 14.5702 4.09784 14.0625 3.55627C12.5975 2.05627 10.6694 1.43134 8.74999 1.43134Z" stroke="#EFEFF1" stroke-width="2.8"/>
-        </svg>
-    </div>
-    <div class="like-cnt">
-        <div class="like-cnt-val">{{ .item.LikesCount }}</div>
-    </div>
-
-    <a href="/feed/{{ .item.ID }}?next=true" class="arrow-down">
+          </svg>
+        </div>
+        <div class="label-text">{{ .item.LikesCount }}</div>
+      </div>
+            
+      <a href="/feed/{{ .item.ID }}?next=true" class="action square-bg">
         <svg width="25" height="15" viewBox="0 0 25 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24.4034 3.47252L13.9135 13.961C13.1325 14.7419 11.8663 14.7419 11.0853 13.961L0.596178 3.47333C-0.198726 2.67761 -0.198726 1.38966 0.596178 0.596381C1.39108 -0.198523 2.67822 -0.197709 3.47313 0.596381L11.0862 8.20806C11.8672 8.98892 13.1333 8.98895 13.9143 8.20813L21.5289 0.595567C22.3238 -0.198523 23.611 -0.198523 24.405 0.595567C25.1983 1.39047 25.1983 2.67761 24.4034 3.47252Z" fill="#EFEFF1"/>
+        <path d="M24.4034 3.47252L13.9135 13.961C13.1325 14.7419 11.8663 14.7419 11.0853 13.961L0.596178 3.47333C-0.198726 2.67761 -0.198726 1.38966 0.596178 0.596381C1.39108 -0.198523 2.67822 -0.197709 3.47313 0.596381L11.0862 8.20806C11.8672 8.98892 13.1333 8.98895 13.9143 8.20813L21.5289 0.595567C22.3238 -0.198523 23.611 -0.198523 24.405 0.595567C25.1983 1.39047 25.1983 2.67761 24.4034 3.47252Z" fill="#EFEFF1"/>
         </svg>
-    </a>
+      </a>
+    </div>
 
+  </div>
+
+
+
+<div class="info-card">
+    <div class="composer-name"><span>{{ .item.Name }}</span></div>
     <div class="description">
         <div class="description-text">{{ .item.Description }}</div>
         <div class="description-show">Показать больше</div>
     </div>
+</div>
+
 
   </main>
 
