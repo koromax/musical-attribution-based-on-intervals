@@ -17,13 +17,13 @@ func StartServer() {
 	r.Static("/static", "./resources")
 
 	r.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusFound, "/feed")
+		c.Redirect(http.StatusFound, "/composers-feed")
 	})
 
-	r.GET("/feed", h.GetFeed)
-	r.GET("/feed/:id", h.GetFeed)
-	r.GET("/draft", h.GetDraft)
-	r.GET("/grid", h.GetGrid)
+	r.GET("/composers-feed", h.GetComposersFeed)
+	r.GET("/composers-feed/:id", h.GetComposersFeed)
+	r.GET("/composer-draft", h.GetComposerDraft)
+	r.GET("/composers-grid", h.GetComposersGrid)
 
 	r.Run(":8080")
 }

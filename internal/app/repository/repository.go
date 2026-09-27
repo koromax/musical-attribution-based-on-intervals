@@ -62,7 +62,7 @@ func NewRepository() *Repository {
 	}
 }
 
-func (r *Repository) GetDraft() (Composer, error) {
+func (r *Repository) GetComposerDraft() (Composer, error) {
 	for _, item := range r.composers {
 		if item.Status == "draft" {
 			return item, nil
@@ -71,7 +71,7 @@ func (r *Repository) GetDraft() (Composer, error) {
 	return Composer{}, fmt.Errorf("черновик не найден")
 }
 
-func (r *Repository) GetFeedItem(id int, next bool) (Composer, error) {
+func (r *Repository) GetComposerFeedItem(id int, next bool) (Composer, error) {
 	var published []Composer
 	for _, item := range r.composers {
 		if item.Status == "published" {
@@ -96,7 +96,7 @@ func (r *Repository) GetFeedItem(id int, next bool) (Composer, error) {
 	return published[0], nil
 }
 
-func (r *Repository) GetPublishedGrid(minFreq *float64, maxFreq *float64) []Composer {
+func (r *Repository) GetPublishedComposers(minFreq *float64, maxFreq *float64) []Composer {
 	var result []Composer
 	for _, item := range r.composers {
 		if item.Status != "published" {

@@ -16,7 +16,7 @@ func NewHandler(r *repository.Repository) *Handler {
 	return &Handler{Repo: r}
 }
 
-func (h *Handler) GetFeed(c *gin.Context) {
+func (h *Handler) GetComposersFeed(c *gin.Context) {
 	idStr := c.Param("id")
 	var id int
 	var err error
@@ -30,26 +30,26 @@ func (h *Handler) GetFeed(c *gin.Context) {
 
 	next := c.Query("next") == "true"
 
-	item, err := h.Repo.GetFeedItem(id, next)
+	composer, err := h.Repo.GetComposerFeedItem(id, next)
 	if err != nil {
 		c.String(http.StatusNotFound, err.Error())
 		return
 	}
 
-	c.HTML(http.StatusOK, "feed.html", gin.H{"item": item})
+	c.HTML(http.StatusOK, "composers-feed.html", gin.H{"composer": composer})
 }
 
-func (h *Handler) GetDraft(c *gin.Context) {
-	draft, err := h.Repo.GetDraft()
+func (h *Handler) GetComposerDraft(c *gin.Context) {
+	composer, err := h.Repo.GetComposerDraft()
 	if err != nil {
 		c.String(http.StatusNotFound, err.Error())
 		return
 	}
 
-	c.HTML(http.StatusOK, "draft.html", gin.H{"item": draft})
+	c.HTML(http.StatusOK, "composer-draft.html", gin.H{"composer": composer})
 }
 
-func (h *Handler) GetGrid(c *gin.Context) {
+func (h *Handler) GetComposersGrid(c *gin.Context) {
 	queryStr := c.Query("query")
 	maxQueryStr := c.Query("max_query")
 
@@ -63,10 +63,10 @@ func (h *Handler) GetGrid(c *gin.Context) {
 		maxFreq = &val
 	}
 
-	items := h.Repo.GetPublishedGrid(minFreq, maxFreq)
+	composers := h.Repo.GetPublishedComposers(minFreq, maxFreq)
 
-	c.HTML(http.StatusOK, "grid.html", gin.H{
-		"items":     items,
+	c.HTML(http.StatusOK, "composers-grid.html", gin.H{
+		"composers": composers,
 		"query":     queryStr,
 		"max_query": maxQueryStr,
 	})

@@ -17,14 +17,14 @@
   <main class="main-content draft">
     <div class="page-title">Добавление</div>
 
-    <form class="draft-form" action="/draft" method="POST">
+    <form class="draft-form" action="/composer-draft" method="POST">
 
     <div class="input-section">
         <div class="input-head">Предпросмотр медиа</div>
         <div class="input-body media-preview">
-            <div class="card-picture preview"><img class="card-picture" src="{{ .item.ImageURL }}" alt="{{ .Name }}" /></div>
+            <div class="card-picture preview"><img class="card-picture" src="{{ .composer.ImageURL }}" alt="{{ .composer.Name }}" /></div>
             <div class="feed-media preview"><video class="feed-media preview" autoplay muted loop playsinline>
-                                <source src="{{ .item.VideoURL }}" type="video/mp4">
+                                <source src="{{ .composer.VideoURL }}" type="video/mp4">
                                 Your browser does not support the video tag.
                                 </video></div>
         </div>
@@ -35,11 +35,11 @@
     <div class="input-body-vertical">
         <div class="input-field">
         <label>Имя композитора</label>
-        <input type="text" name="name" value="{{ .item.Name }}">
+        <input type="text" name="name" value="{{ .composer.Name }}">
         </div>
         <div class="input-field">
         <label>Описание</label>
-        <textarea name="description" rows="3">{{ .item.Description }}</textarea>
+        <textarea name="description" rows="3">{{ .composer.Description }}</textarea>
         </div>
     </div>
     </div>
@@ -63,11 +63,11 @@
         <div class="input-body-vertical">
           <div class="input-field">
             <label>Частотность 1</label>
-            <input type="number" step="0.1" name="freq1" value="{{ .item.Freq1 }}" placeholder="38.5">
+            <input type="number" step="0.1" name="freq1" value="{{ .composer.Freq1 }}" placeholder="38.5">
           </div>
           <div class="input-field">
             <label>Частотность 2</label>
-            <input type="number" step="0.1" name="freq2" value="{{ .item.Freq2 }}" placeholder="12.4">
+            <input type="number" step="0.1" name="freq2" value="{{ .composer.Freq2 }}" placeholder="12.4">
           </div>
         </div>
       </div>
@@ -83,13 +83,13 @@
   </main>
 
   <footer class="footer">
-    <a href="/feed" class="nav-btn">
+    <a href="/composers-feed" class="nav-btn">
       <span class="nav-label">Лента</span>
     </a>
-    <a href="/draft" class="nav-btn active">
+    <a href="/composer-draft" class="nav-btn active">
       <span class="nav-label">Добавление</span>
     </a>
-    <a href="/grid" class="nav-btn">
+    <a href="/composers-grid" class="nav-btn">
       <span class="nav-label">Плитка</span>
     </a>
   </footer>
