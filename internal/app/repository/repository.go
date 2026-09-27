@@ -10,9 +10,12 @@ type Composer struct {
 	VideoURL    string  `json:"video_url"`
 	Status      string  `json:"status"`
 	Likes       []int   `json:"likes"`
-	LikesCount  int     `json:"likes_count"`
 	Freq1       float64 `json:"freq1"`
 	Freq2       float64 `json:"freq2"`
+}
+
+func (c Composer) LikesCount() int {
+	return len(c.Likes)
 }
 
 type Repository struct {
@@ -29,8 +32,7 @@ func NewRepository() *Repository {
 				ImageURL:    "http://localhost:9000/music/cover1.jpg",
 				VideoURL:    "http://localhost:9000/music/1.mp4",
 				Status:      "published",
-				Likes:       []int{1, 2, 3, 4, 5, 6, 7, 8, 9},
-				LikesCount:  142,
+				Likes:       []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
 				Freq1:       38.5,
 				Freq2:       12.4,
 			},
@@ -42,7 +44,6 @@ func NewRepository() *Repository {
 				VideoURL:    "http://localhost:9000/music/2.mp4",
 				Status:      "published",
 				Likes:       []int{1, 2, 3},
-				LikesCount:  89,
 				Freq1:       12.0,
 				Freq2:       7.8,
 			},
@@ -54,7 +55,6 @@ func NewRepository() *Repository {
 				VideoURL:    "http://localhost:9000/music/3.mp4",
 				Status:      "draft",
 				Likes:       []int{},
-				LikesCount:  0,
 				Freq1:       25.4,
 				Freq2:       10.2,
 			},
