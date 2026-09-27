@@ -1,114 +1,114 @@
 package repository
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"time"
 
-type Composer struct {
-	ID          int     `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	ImageURL    string  `json:"image_url"`
-	VideoURL    string  `json:"video_url"`
-	Status      string  `json:"status"`
-	Likes       []int   `json:"likes"`
-	Freq1       float64 `json:"freq1"`
-	Freq2       float64 `json:"freq2"`
-}
+	"gorm.io/gorm"
 
-func (c Composer) LikesCount() int {
-	return len(c.Likes)
-}
+	"interval_attribution/internal/app/ds"
+)
 
 type Repository struct {
-	composers []Composer
+	db *gorm.DB
 }
 
-func NewRepository() *Repository {
-	return &Repository{
-		composers: []Composer{
-			{
-				ID:          1,
-				Name:        "И. С. Бах",
-				Description: "Композитор эпохи барокко.",
-				ImageURL:    "http://localhost:9000/music/cover1.jpg",
-				VideoURL:    "http://localhost:9000/music/1.mp4",
-				Status:      "published",
-				Likes:       []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-				Freq1:       38.5,
-				Freq2:       12.4,
-			},
-			{
-				ID:          2,
-				Name:        "Ф. Шопен",
-				Description: "Композитор эпохи романтизма.",
-				ImageURL:    "http://localhost:9000/music/cover2.jpg",
-				VideoURL:    "http://localhost:9000/music/2.mp4",
-				Status:      "published",
-				Likes:       []int{1, 2, 3},
-				Freq1:       12.0,
-				Freq2:       7.8,
-			},
-			{
-				ID:          3,
-				Name:        "Новый композитор",
-				Description: "Черновик.",
-				ImageURL:    "http://localhost:9000/music/cover3.jpg",
-				VideoURL:    "http://localhost:9000/music/3.mp4",
-				Status:      "draft",
-				Likes:       []int{},
-				Freq1:       25.4,
-				Freq2:       10.2,
-			},
-		},
-	}
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{db: db}
 }
 
-func (r *Repository) GetComposerDraft() (Composer, error) {
-	for _, item := range r.composers {
-		if item.Status == "draft" {
-			return item, nil
-		}
+func (r *Repository) GetComposerFeedItem(currentID int, next bool) (ds.Composer, error) {
+	var composer ds.Composer
+
+	if currentID == 0 {
+		err := r.db.Where("status = ?", "published").Order("id asc").Limit(1).First(&composer).Error
+		return composer, err
 	}
-	return Composer{}, fmt.Errorf("черновик не найден")
+
+	if next {
+		err := r.db.Where("status = ? AND id > ?", "published", currentID).Order("id asc").Limit(1).First(&composer).Error
+		if err != nil {
+			err = r.db.Where("status = ?", "published").Order("id asc").Limit(1).First(&composer).Error
+		}
+		return composer, err
+	}
+
+	err := r.db.Where("status = ? AND id = ?", "published", currentID).First(&composer).Error
+	return composer, err
 }
 
-func (r *Repository) GetComposerFeedItem(id int, next bool) (Composer, error) {
-	var published []Composer
-	for _, item := range r.composers {
-		if item.Status == "published" {
-			published = append(published, item)
-		}
+func (r *Repository) GetComposerDraft(userID uint) (ds.Composer, error) {
+	var composer ds.Composer
+	err := r.db.Where("creator_id = ? AND status = ?", userID, "draft").First(&composer).Error
+	if err != nil {
+		return ds.Composer{}, fmt.Errorf("черновик не найден")
 	}
-	if len(published) == 0 {
-		return Composer{}, fmt.Errorf("нет публикаций")
-	}
-	if id == 0 {
-		return published[0], nil
-	}
-	for i, item := range published {
-		if item.ID == id {
-			if next {
-				nextIdx := (i + 1) % len(published)
-				return published[nextIdx], nil
-			}
-			return item, nil
-		}
-	}
-	return published[0], nil
+	return composer, nil
 }
 
-func (r *Repository) GetPublishedComposers(minFreq *float64, maxFreq *float64) []Composer {
-	var result []Composer
-	for _, item := range r.composers {
-		if item.Status != "published" {
-			continue
-		}
-		if minFreq != nil && item.Freq1 < *minFreq {
-			continue
-		}
-		if maxFreq != nil && item.Freq1 > *maxFreq {
-			continue
-		}
-		result = append(result, item)
+func (r *Repository) GetPublishedComposers(minFreq *float64, maxFreq *float64) []ds.Composer {
+	var composers []ds.Composer
+	query := r.db.Where("status = ?", "published")
+
+	if minFreq != nil {
+		query = query.Where("freq1 >= ?", *minFreq)
 	}
-	return result
+	if maxFreq != nil {
+		query = query.Where("freq1 <= ?", *maxFreq)
+	}
+
+	query.Order("id asc").Find(&composers)
+	return composers
+}
+
+func (r *Repository) CreateDraftComposer(userID uint, name string) (ds.Composer, error) {
+	var existing ds.Composer
+	err := r.db.Where("creator_id = ? AND status = ?", userID, "draft").First(&existing).Error
+	if err == nil {
+		return existing, nil
+	}
+
+	newComposer := ds.Composer{
+		Name:       name,
+		Status:     "draft",
+		CreatorID:  userID,
+		DateCreate: time.Now(),
+		DateFormed: time.Now(),
+	}
+
+	if err := r.db.Create(&newComposer).Error; err != nil {
+		return ds.Composer{}, err
+	}
+	return newComposer, nil
+}
+
+func (r *Repository) PublishComposer(id uint, description string, freq1, freq2 float64) error {
+	return r.db.Model(&ds.Composer{}).
+		Where("id = ? AND status = ?", id, "draft").
+		Updates(map[string]interface{}{
+			"description": description,
+			"freq1":       freq1,
+			"freq2":       freq2,
+			"status":      "published",
+			"date_formed": time.Now(),
+		}).Error
+}
+
+func (r *Repository) DeleteComposerSQL(id int) error {
+	query := "UPDATE composers SET status = 'deleted', date_formed = NOW() WHERE id = $1 AND status != 'deleted'"
+	res := r.db.Exec(query, id)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return errors.New("карточка не найдена или уже удалена")
+	}
+	return nil
+}
+
+func (r *Repository) GetLikesCount(composerID uint) int64 {
+	var count int64
+	r.db.Model(&ds.ComposerLike{}).Where("composer_id = ?", composerID).Count(&count)
+	return count
 }
