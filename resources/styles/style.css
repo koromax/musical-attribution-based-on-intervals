@@ -366,15 +366,15 @@ body {
 }
 
 .input-body.media-preview {
-    height: 190px;
+    /* height: 190px; */
     padding: 20px 30px;
-    flex-direction: row;
-    gap: 67px;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .card-picture.preview {
-    width: 150px;
-    height: 150px;
+    width: 292px;
+    height: 292px;
     object-fit: cover;
     border-radius: 2px;
     background: var(--bg-lighter);
@@ -382,8 +382,8 @@ body {
 }
 
 .feed-media.preview {
-    width: 75px;
-    height: 150px;
+    width: 292px;
+    height: 542px;  /*  542 = 292 * (765 / 412)  */
     object-fit: cover;
     position: static;
     background: var(--bg-lighter);
