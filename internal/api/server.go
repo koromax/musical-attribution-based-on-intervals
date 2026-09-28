@@ -2,7 +2,7 @@ package api
 
 import (
 	"log"
-	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -22,25 +22,36 @@ func StartServer() {
 		log.Fatalf("Не удалось подключиться к базе данных: %v", err)
 	}
 
-	repo := repository.NewRepository(db)
-	h := handler.NewHandler(repo)
-
-	r := gin.Default()
-	r.LoadHTMLGlob("templates/*")
-	r.Static("/static", "./resources")
-
-	r.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusFound, "/composers-feed")
+	repo, err := repository.NewRepository(&repository.RepositorySettings{
+		DB:              db,
+		MinioEndpoint:   os.Getenv("MINIO_ENDPOINT"),
+		MinioAccessKey:  os.Getenv("MINIO_ACCESS_KEY"),
+		MinioSecretKey:  os.Getenv("MINIO_SECRET_KEY"),
+		MinioBucketName: os.Getenv("MINIO_BUCKET_NAME"),
 	})
+	if err != nil {
+		log.Fatalf("Ошибка MinIO/Repository: %v", err)
+	}
 
-	r.GET("/composers-feed", h.GetComposersFeed)
-	r.GET("/composers-feed/:id", h.GetComposersFeed)
-	r.GET("/composer-draft", h.GetComposerDraft)
-	r.GET("/composers-grid", h.GetComposersGrid)
+	h := handler.NewHandler(repo)
+	r := gin.Default()
 
-	r.POST("/composer/create", h.CreateComposerDraft)
-	r.POST("/composer/publish", h.PublishComposer)
-	r.POST("/composer/delete", h.DeleteComposer)
+	api := r.Group("/api")
+	{
+		// Домен композиторов (услуг)
+		api.GET("/composers", h.GetComposersAPI)
+		api.GET("/composer/feed", h.GetComposerFeedAPI)
+		api.GET("/composer/draft", h.GetComposerDraftAPI)
+		api.POST("/composer", h.CreateComposerAPI)
+		api.PUT("/composer/:id/publish", h.PublishComposerAPI)
+		api.DELETE("/composer/:id", h.DeleteComposerAPI)
+		api.POST("/composer/:id/like", h.LikeComposerAPI)
+
+		// Домен пользователя
+		api.POST("/user/register", h.RegisterUserAPI)
+		api.POST("/user/login", h.LoginUserAPI)
+		api.POST("/user/logout", h.LogoutUserAPI)
+	}
 
 	r.Run(":8080")
 }

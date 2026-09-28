@@ -15,6 +15,7 @@ type Composer struct {
 	CreatorID   uint      `gorm:"not null" json:"creator_id"`
 	DateFormed  time.Time `gorm:"type:timestamp;autoUpdateTime" json:"date_formed"`
 
-	// Каскадное удаление отключено
-	Creator User `gorm:"foreignKey:CreatorID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;" json:"creator"`
+	IsCreator bool `gorm:"-" json:"is_creator"`
+
+	Creator User `gorm:"foreignKey:CreatorID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;" json:"-"`
 }
