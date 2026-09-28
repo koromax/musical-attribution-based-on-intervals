@@ -449,7 +449,7 @@ body {
     font-family: inherit;
 }
 
-/* .save-btn-container {
+.save-btn-container {
     display: flex;
     justify-content: center;
     margin: 20px 0 30px 0;
@@ -472,7 +472,7 @@ body {
     color: var(--text);
     font-size: 14px;
     font-weight: 400;
-} */
+}
 
 /* ПЛИТКА */
 
@@ -526,7 +526,7 @@ body {
 .slider-labels {
   display: flex;
   justify-content: space-between;
-  padding: 0 2px; /* Aligns label text roughly over the center of the thumb */
+  padding: 0 2px;
 }
 
 .slider-label {
@@ -544,10 +544,9 @@ body {
 .slider-track-container {
   position: relative;
   width: 100%;
-  height: 17px; /* Height of the track area */
+  height: 17px;
 }
 
-/* Slider Track and Input Overlaps */
 .slider-track {
   position: absolute;
   top: 0;
@@ -622,7 +621,6 @@ body {
   background: rgba(112, 91, 255, 0.1);
 }
 
-
 .grid-cards {
     width: 350px;
     padding: 20px 5px;
@@ -672,9 +670,15 @@ body {
     font-weight: 400;
 }
 
+.card-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .card-likes {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     gap: 8px;
     margin-top: 2px;
 }
@@ -683,6 +687,23 @@ body {
     color: var(--text);
     font-size: 14px;
     font-weight: 400;
+}
+
+.card-delete-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: 13px;
+    color: #888;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.card-delete-btn:hover {
+    color: #ff4d4f;
 }
 
 .no-items {

@@ -15,9 +15,16 @@
   </header>
 
   <main class="main-content draft">
-    <div class="page-title">Добавление</div>
+    <div class="page-title">{{ if .composer.ID }}Публикация черновика{{ else }}Создание{{ end }}</div>
 
-    <form class="draft-form" action="/composer-draft" method="POST">
+    <form class="draft-form" 
+          action="{{ if .composer.ID }}/composer/publish{{ else }}/composer/create{{ end }}" 
+          method="POST" 
+          enctype="multipart/form-data">
+
+    {{ if .composer.ID }}
+      <input type="hidden" name="id" value="{{ .composer.ID }}">
+    {{ end }}
 
     <div class="input-section">
         <div class="input-head">Предпросмотр медиа</div>
@@ -37,10 +44,13 @@
         <label>Имя композитора</label>
         <input type="text" name="name" value="{{ .composer.Name }}">
         </div>
+
+        {{ if .composer.ID }}
         <div class="input-field">
         <label>Описание</label>
         <textarea name="description" rows="3">{{ .composer.Description }}</textarea>
         </div>
+        {{ end }}
     </div>
     </div>
 
@@ -56,8 +66,9 @@
             <input type="file" name="video" accept="video/*">
           </div>
         </div>
-      </div>
+    </div>
 
+      {{ if .composer.ID }}
       <div class="input-section">
         <div class="input-head">Поля по теме</div>
         <div class="input-body-vertical">
@@ -71,14 +82,14 @@
           </div>
         </div>
       </div>
+      {{ end }}
 
-      <!-- <div class="save-btn-container">
+      <div class="save-btn-container">
         <button type="submit" class="save-btn">
-            <div class="save-btn-text">Сохранить</div>
+            <div class="save-btn-text">{{ if .composer.ID }}Опубликовать{{ else }}Далее{{ end }}</div>
         </button>
-      </div> -->
+      </div>
 
-      <!-- <button type="submit" class="nav-btn">Сохранить</button> -->
     </form>
   </main>
 

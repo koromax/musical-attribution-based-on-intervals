@@ -74,8 +74,7 @@ func (h *Handler) GetComposersFeed(c *gin.Context) {
 func (h *Handler) GetComposerDraft(c *gin.Context) {
 	composer, err := h.Repo.GetComposerDraft(DefaultUserID)
 	if err != nil {
-		c.HTML(http.StatusOK, "composer-draft.html", gin.H{"composer": nil})
-		return
+		composer = ds.Composer{}
 	}
 
 	composer.ImageURL, composer.VideoURL = prepareMedia(composer.ImageURL, composer.VideoURL)

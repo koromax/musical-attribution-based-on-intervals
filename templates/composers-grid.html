@@ -52,12 +52,20 @@
         <div class="card-info">
         <div class="card-title">{{ .Name }}</div>
         <div class="card-freq">Частотность: {{ .Freq1 }}</div>
-        <div class="card-likes">
-            <svg class="like-icon" width="20" height="18" viewBox="0 0 30 27" fill="none">
-            <path d="M8.75 1.43C6.83 1.43 4.9 2.06 3.44 3.56C0.5 6.56 0.59 11.18 3.44 14.18L13.55 24.89C14.33 25.73 15.67 25.73 16.45 24.89L26.56 14.18C29.41 11.18 29.49 6.56 26.56 3.56C23.63 0.68 18.87 0.68 15.94 3.56C15.43 4.1 14.57 4.1 14.06 3.56C12.6 2.06 10.67 1.43 8.75 1.43Z" stroke="#EFEFF1" stroke-width="2.5"/>
-            </svg>
-            <span class="like-val">{{ .LikesCount }}</span>
+        <div class="card-footer">
+            <div class="card-likes">
+                <svg class="like-icon" width="20" height="18" viewBox="0 0 30 27" fill="none">
+                    <path d="M8.75 1.43C6.83 1.43 4.9 2.06 3.44 3.56C0.5 6.56 0.59 11.18 3.44 14.18L13.55 24.89C14.33 25.73 15.67 25.73 16.45 24.89L26.56 14.18C29.41 11.18 29.49 6.56 26.56 3.56C23.63 0.68 18.87 0.68 15.94 3.56C15.43 4.1 14.57 4.1 14.06 3.56C12.6 2.06 10.67 1.43 8.75 1.43Z" stroke="#EFEFF1" stroke-width="2.5"/>
+                </svg>
+                <span class="like-val">{{ .LikesCount }}</span>
+            </div>
+
+            <form action="/composer/delete" method="POST" onclick="event.stopPropagation();" style="display: inline;">
+                <input type="hidden" name="id" value="{{ .ID }}">
+                <button type="submit" class="card-delete-btn">Удалить</button>
+            </form>
         </div>
+            
         </div>
     </a>
     {{ end }}
