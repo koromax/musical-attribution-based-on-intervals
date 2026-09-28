@@ -313,9 +313,12 @@ body {
     font-weight: 400;
     color: var(--text);
     line-height: 20px;
-    white-space: nowrap;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .description-show {
