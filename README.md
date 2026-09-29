@@ -50,10 +50,6 @@
 
 # REST API Домена "Композиторы" (Лабораторная работа №3)
 
-Веб-сервис реализации бизнес-логики домена "Композиторы" с использованием Go (Gin, GORM), PostgreSQL и хранилища S3 MinIO.
-
----
-
 ## 1. Таблицы базы данных
 
 ### 1.1. Таблица `users` (Пользователи)
@@ -64,20 +60,20 @@
 | `password` | `VARCHAR(255)` | NOT NULL | Пароль |
 | `is_moderator` | `BOOLEAN` | DEFAULT false | Флаг модератора |
 
-### 1.2. Таблица `composers` (Услуги композиторов)
+### 1.2. Таблица `composers` (Услуги/композиторы)
 | Поле | Тип данных | Ограничения | Описание |
 | :--- | :--- | :--- | :--- |
-| `id` | `BIGSERIAL` | PRIMARY KEY | Уникальный идентификатор записи |
-| `name` | `VARCHAR(255)` | NOT NULL | Название услуги / имя композитора |
-| `description` | `TEXT` | | Описание услуги |
+| `id` | `BIGSERIAL` | PRIMARY KEY | Уникальный идентификатор |
+| `name` | `VARCHAR(255)` | NOT NULL | Имя композитора |
+| `description` | `TEXT` | | Описание |
 | `status` | `VARCHAR(32)` | DEFAULT 'draft' | Статус (`draft`, `published`, `deleted`) |
 | `image_url` | `VARCHAR(512)` | | Ссылка на изображение в MinIO |
 | `video_url` | `VARCHAR(512)` | | Ссылка на видео в MinIO |
-| `freq1` | `NUMERIC` | | Первая частота диапазона |
-| `freq2` | `NUMERIC` | | Вторая частота диапазона |
+| `freq1` | `NUMERIC` | | Первая частотность |
+| `freq2` | `NUMERIC` | | Вторая частотность |
 | `date_create` | `TIMESTAMPTZ` | DEFAULT now() | Дата и время создания записи |
-| `date_formed` | `TIMESTAMPTZ` | | Дата публикации записи |
 | `creator_id` | `BIGINT` | FOREIGN KEY (`users.id`) | Идентификатор создателя |
+| `date_formed` | `TIMESTAMPTZ` | | Дата публикации записи |
 
 > **Виртуальное поле (не хранится в БД):**
 > * `is_creator` (`BOOLEAN`): Вычисляется на бэкенде. Возвращает `true`, если текущий пользователь из синглтона является автором записи.
@@ -85,40 +81,30 @@
 ### 1.3. Таблица `composer_likes` (Лайки услуг)
 | Поле | Тип данных | Ограничения | Описание |
 | :--- | :--- | :--- | :--- |
-| `user_id` | `BIGINT` | FOREIGN KEY (`users.id`), PRIMARY KEY | Идентификатор пользователя |
-| `composer_id` | `BIGINT` | FOREIGN KEY (`composers.id`), PRIMARY KEY | Идентификатор композитора |
+| `id` | `BIGSERIAL` | PRIMARY KEY | Уникальный идентификатор |
+| `user_id` | `BIGINT` | FOREIGN KEY (`users.id`) | Идентификатор пользователя |
+| `composer_id` | `BIGINT` | FOREIGN KEY (`composers.id`) | Идентификатор композитора |
 
 ---
 
 ## 2. Описание REST API методов
 
-Все методы требуют префикс `/api`. Идентификатор пользователя в текущей лабораторной фиксируется через функцию-синглтон `ds.GetCurrentUserSingleton()`. Системные поля (`status`, `creator_id`, `date_create`, `date_formed`) вычисляются автоматически и запрещены к передаче клиентом.
+### Домен услуги
+| # | Метод | URL Эндпоинт | Тело запроса | HTTP Код | Описание |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | `GET` | /api/composers | ?min_freq=5&max_freq=20 | 200 OK | Список опубликованных композиторов (услуг) с фильтрацией |
+| 2 | `GET` | /api/composer/feed | - | 200 OK | Получение ленты  |
+| 3 | `GET` | /api/composer/draft | - | 200 OK | Получение черновика авторизированного пользователя |
+| 4 | `POST` | /api/composer | name, pic, video [*] | 201 Created | Добавление композитора |
+| 5 | `PUT` | /api/composer/:id/publish | description, freq1, freq2 [*] | 200 OK | Публикация композитора |
+| 6 | `DELETE` | /api/composer/:id | - | 200 OK | Удаление услуги созданной текущим пользователем |
+| 7 | `POST` | /api/composer/:id/like | like=0/1 | 200 OK | Обновления статуса лайка |
 
-### 2.1. Домен композиторов (`/api/composer`)
+> [*] выполнено как в ЛР2 с разделением полей. спросить и исправить если некорректно выполнено.
 
-#### 1. Список опубликованных услуг
-* **Method:** `GET`
-* **URL:** `/api/composers`
-* **Query Params:**
-  * `min_freq` (float, optional) — минимальная частота
-  * `max_freq` (float, optional) — максимальная частота
-* **Описание:** Возвращает массив опубликованных композиторов (`status = 'published'`). Записи со статусом `'deleted'` исключаются. Для каждой записи рассчитывается флаг `is_creator`.
-* **Успешный ответ (200 OK):**
-```json
-[
-  {
-    "id": 1,
-    "name": "Mozart",
-    "description": "Classical composer",
-    "status": "published",
-    "image_url": "[http://127.0.0.1:9000/composers/img_a1b2c3d4.png](http://127.0.0.1:9000/composers/img_a1b2c3d4.png)",
-    "video_url": "[http://127.0.0.1:9000/composers/vid_e5f6g7h8.mp4](http://127.0.0.1:9000/composers/vid_e5f6g7h8.mp4)",
-    "freq1": 220.5,
-    "freq2": 440.0,
-    "date_create": "2026-09-28T20:00:00Z",
-    "date_formed": "2026-09-28T20:05:00Z",
-    "creator_id": 1,
-    "is_creator": true
-  }
-]
-```
+### Домен пользователь
+| # | Метод | URL Эндпоинт | Тело запроса | HTTP Код | Описание |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 9 | `POST` | /api/user/register | login, password | 201 Created | Регистрация пользователя |
+| 10 | `POST` | /api/user/login | - | (заглушка) | Аутентификация пользователя |
+| 11 | `POST` | /api/user/logout | - | (заглушка) | Деавторизация пользователя |
