@@ -23,7 +23,7 @@ func (r *Repository) GetPublishedComposers(minFreq, maxFreq *float64, currentUse
 	}
 
 	for i := range composers {
-		composers[i].IsCreator = (composers[i].CreatorID == currentUserID)
+		composers[i].CurrentUserIsCreator = (composers[i].CreatorID == currentUserID)
 	}
 
 	return composers, nil
@@ -35,7 +35,7 @@ func (r *Repository) GetComposerFeedItem(currentID int, next bool, currentUserID
 	if currentID == 0 {
 		err := r.db.Where("status = ?", "published").Order("id asc").First(&composer).Error
 		if err == nil {
-			composer.IsCreator = (composer.CreatorID == currentUserID)
+			composer.CurrentUserIsCreator = (composer.CreatorID == currentUserID)
 		}
 		return composer, err
 	}
@@ -46,14 +46,14 @@ func (r *Repository) GetComposerFeedItem(currentID int, next bool, currentUserID
 			err = r.db.Where("status = ?", "published").Order("id asc").First(&composer).Error
 		}
 		if err == nil {
-			composer.IsCreator = (composer.CreatorID == currentUserID)
+			composer.CurrentUserIsCreator = (composer.CreatorID == currentUserID)
 		}
 		return composer, err
 	}
 
 	err := r.db.Where("status = ? AND id = ?", "published", currentID).First(&composer).Error
 	if err == nil {
-		composer.IsCreator = (composer.CreatorID == currentUserID)
+		composer.CurrentUserIsCreator = (composer.CreatorID == currentUserID)
 	}
 	return composer, err
 }
