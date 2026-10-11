@@ -11,13 +11,13 @@ func (h *Handler) RegisterUserAPI(c *gin.Context) {
 	password := c.PostForm("password")
 
 	if login == "" || password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "логин и пароль обязательны"})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
 	user, err := h.Repo.CreateUser(login, password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
@@ -35,7 +35,5 @@ func (h *Handler) LoginUserAPI(c *gin.Context) {
 }
 
 func (h *Handler) LogoutUserAPI(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "успешный выход из системы (заглушка)",
-	})
+	c.Status(http.StatusOK)
 }

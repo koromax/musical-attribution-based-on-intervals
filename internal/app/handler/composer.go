@@ -26,7 +26,7 @@ func (h *Handler) GetComposersAPI(c *gin.Context) {
 
 	composers, err := h.Repo.GetPublishedComposers(minFreq, maxFreq, currentUserID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (h *Handler) GetComposerFeedAPI(c *gin.Context) {
 
 	composer, err := h.Repo.GetComposerFeedItem(currentID, next, currentUserID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "элемент ленты не найден"})
+		c.Status(http.StatusNotFound)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (h *Handler) GetComposerDraftAPI(c *gin.Context) {
 
 	composer, err := h.Repo.GetComposerDraft(currentUserID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.Status(http.StatusNotFound)
 		return
 	}
 
@@ -65,13 +65,13 @@ func (h *Handler) CreateComposerAPI(c *gin.Context) {
 	name := c.PostForm("name")
 
 	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "название не может быть пустым"})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
 	composer, err := h.Repo.CreateDraftComposer(currentUserID, name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
@@ -104,7 +104,7 @@ func (h *Handler) PublishComposerAPI(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "некорректный id"})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
@@ -114,11 +114,11 @@ func (h *Handler) PublishComposerAPI(c *gin.Context) {
 
 	err = h.Repo.PublishComposer(uint(id), currentUserID, description, freq1, freq2)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "услуга успешно опубликована"})
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) DeleteComposerAPI(c *gin.Context) {
@@ -127,17 +127,17 @@ func (h *Handler) DeleteComposerAPI(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "некорректный id"})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
 	err = h.Repo.DeleteComposerSoft(uint(id), currentUserID)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		c.Status(http.StatusForbidden)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "услуга переведена в статус deleted"})
+	c.Status(http.StatusOK)
 }
 
 func (h *Handler) LikeComposerAPI(c *gin.Context) {
@@ -146,7 +146,7 @@ func (h *Handler) LikeComposerAPI(c *gin.Context) {
 	idParam := c.Param("id")
 	composerID, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "некорректный id"})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
@@ -154,9 +154,9 @@ func (h *Handler) LikeComposerAPI(c *gin.Context) {
 
 	err = h.Repo.ToggleLike(currentUserID, uint(composerID), likeVal)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "статус лайка обновлен"})
+	c.Status(http.StatusOK)
 }
