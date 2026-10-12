@@ -5,12 +5,18 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-
-	"interval_attribution/internal/app/ds"
 )
 
+// GetComposersAPI — получение списка опубликованных композиторов
+// @Summary Получение списка опубликованных композиторов
+// @Tags composers
+// @Produce json
+// @Param min_freq query number false "Минимальная частота"
+// @Param max_freq query number false "Максимальная частота"
+// @Success 200 {object} []ds.Composer
+// @Router /composers [get]
 func (h *Handler) GetComposersAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 
 	var minFreq, maxFreq *float64
 	if val := c.Query("min_freq"); val != "" {
@@ -33,8 +39,16 @@ func (h *Handler) GetComposersAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, composers)
 }
 
+// GetComposerFeedAPI — получение ленты композиторов
+// @Summary Получение ленты композиторов
+// @Tags composers
+// @Produce json
+// @Param id query int false "Текущий ID"
+// @Param next query boolean false "Запрос далее"
+// @Success 200 {object} ds.Composer
+// @Router /composer/feed [get]
 func (h *Handler) GetComposerFeedAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 
 	currentID, _ := strconv.Atoi(c.Query("id"))
 	next := c.Query("next") == "true"
@@ -48,8 +62,14 @@ func (h *Handler) GetComposerFeedAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, composer)
 }
 
+// GetComposerDraftAPI — получение черновика композитора
+// @Summary Получение черновика композитора
+// @Tags composers
+// @Produce json
+// @Success 200 {object} ds.Composer
+// @Router /composer/draft [get]
 func (h *Handler) GetComposerDraftAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 
 	composer, err := h.Repo.GetComposerDraft(currentUserID)
 	if err != nil {
@@ -60,8 +80,19 @@ func (h *Handler) GetComposerDraftAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, composer)
 }
 
+// CreateComposerAPI — создание нового черновика композитора с медиафайлами
+// @Summary Создание черновика композитора
+// @Tags composers
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param name formData string true "Имя композитора"
+// @Param pic formData file false "Изображение"
+// @Param video formData file false "Видео"
+// @Success 201 {object} ds.Composer
+// @Router /composer [post]
 func (h *Handler) CreateComposerAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 	name := c.PostForm("name")
 
 	if name == "" {
@@ -98,8 +129,19 @@ func (h *Handler) CreateComposerAPI(c *gin.Context) {
 	c.JSON(http.StatusCreated, composer)
 }
 
+// PublishComposerAPI — публикация черновика композитора
+// @Summary Публикация черновика композитора
+// @Tags composers
+// @Accept multipart/form-data
+// @Security BearerAuth
+// @Param id path int true "ID композитора"
+// @Param description formData string false "Описание"
+// @Param freq1 formData number false "Частота 1"
+// @Param freq2 formData number false "Частота 2"
+// @Success 200
+// @Router /composer/{id}/publish [put]
 func (h *Handler) PublishComposerAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
@@ -121,8 +163,15 @@ func (h *Handler) PublishComposerAPI(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// DeleteComposerAPI — мягкое удаление композитора
+// @Summary Удаление композитора
+// @Tags composers
+// @Security BearerAuth
+// @Param id path int true "ID композитора"
+// @Success 200
+// @Router /composer/{id} [delete]
 func (h *Handler) DeleteComposerAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
@@ -140,8 +189,17 @@ func (h *Handler) DeleteComposerAPI(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// LikeComposerAPI — установка или удаление лайка для композитора
+// @Summary Лайк/Дизлайк композитора
+// @Tags composers
+// @Accept multipart/form-data
+// @Security BearerAuth
+// @Param id path int true "ID композитора"
+// @Param like formData int true "Значение лайка"
+// @Success 200
+// @Router /composer/{id}/like [post]
 func (h *Handler) LikeComposerAPI(c *gin.Context) {
-	currentUserID := ds.GetCurrentUserSingleton().UserID
+	currentUserID := getUserID(c)
 
 	idParam := c.Param("id")
 	composerID, err := strconv.ParseUint(idParam, 10, 64)

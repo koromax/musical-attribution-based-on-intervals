@@ -26,3 +26,12 @@ func (r *Repository) CreateUser(login, password string) (ds.User, error) {
 
 	return user, nil
 }
+
+func (r *Repository) GetUserByLogin(login string) (*ds.User, error) {
+	user := &ds.User{}
+	err := r.db.Where("login = ?", login).First(user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

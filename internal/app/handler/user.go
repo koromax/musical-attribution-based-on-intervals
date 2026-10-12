@@ -1,39 +1,14 @@
 package handler
 
-import (
-	"net/http"
+import "github.com/gin-gonic/gin"
 
-	"github.com/gin-gonic/gin"
-)
-
-func (h *Handler) RegisterUserAPI(c *gin.Context) {
-	login := c.PostForm("login")
-	password := c.PostForm("password")
-
-	if login == "" || password == "" {
-		c.Status(http.StatusBadRequest)
-		return
+func getUserID(c *gin.Context) uint {
+	val, exists := c.Get("user_id")
+	if !exists {
+		return 0 // 0 для неавторизованных
 	}
-
-	user, err := h.Repo.CreateUser(login, password)
-	if err != nil {
-		c.Status(http.StatusBadRequest)
-		return
+	if id, ok := val.(uint); ok {
+		return id
 	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"id":    user.ID,
-		"login": user.Login,
-	})
-}
-
-func (h *Handler) LoginUserAPI(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "аутентификация пройдена (нет)",
-		"token":   "tokentokentoken",
-	})
-}
-
-func (h *Handler) LogoutUserAPI(c *gin.Context) {
-	c.Status(http.StatusOK)
+	return 0
 }
