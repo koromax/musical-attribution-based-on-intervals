@@ -3,12 +3,10 @@ package api
 import (
 	"context"
 	"log"
-	"os"
+	"net"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/driver/postgres"
@@ -24,50 +22,46 @@ import (
 )
 
 func StartServer() {
-	_ = godotenv.Load()
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Не удалось загрузить конфигурацию: %v", err)
+	}
+	if cfg.JWT.Token == "" {
+		log.Fatal("Критическая ошибка: JWT_SECRET_KEY не задан в переменных окружения")
+	}
+
 	ctx := context.Background()
 
-	db, err := gorm.Open(postgres.Open(dsn.FromEnv()), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn.FromConfig(cfg.Database)), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Не удалось подключиться к базе данных: %v", err)
 	}
 
 	repo, err := repository.NewRepository(&repository.RepositorySettings{
 		DB:              db,
-		MinioEndpoint:   os.Getenv("MINIO_ENDPOINT"),
-		MinioAccessKey:  os.Getenv("MINIO_ACCESS_KEY"),
-		MinioSecretKey:  os.Getenv("MINIO_SECRET_KEY"),
-		MinioBucketName: os.Getenv("MINIO_BUCKET_NAME"),
+		MinioEndpoint:   cfg.Minio.Endpoint,
+		MinioAccessKey:  cfg.Minio.AccessKey,
+		MinioSecretKey:  cfg.Minio.SecretKey,
+		MinioBucketName: cfg.Minio.Bucket,
 	})
 	if err != nil {
 		log.Fatalf("Ошибка MinIO/Repository: %v", err)
 	}
 
-	redisPort, _ := strconv.Atoi(os.Getenv("REDIS_PORT"))
 	rClient, err := appRedis.New(
 		ctx,
-		os.Getenv("REDIS_HOST"),
-		redisPort,
-		os.Getenv("REDIS_PASSWORD"),
-		os.Getenv("REDIS_USER"),
+		cfg.Redis.Host,
+		cfg.Redis.Port,
+		cfg.Redis.Password,
+		cfg.Redis.User,
 	)
 	if err != nil {
 		log.Fatalf("Не удалось подключиться к Redis: %v", err)
 	}
 	defer rClient.Close()
 
-	jwtSecret := os.Getenv("JWT_SECRET_KEY")
-	if jwtSecret == "" {
-		log.Fatalf("Критическая ошибка: JWT_SECRET_KEY не задан в переменных окружения")
-	}
-
 	h := handler.NewHandler(repo)
-	authHandler := handler.NewAuthHandler(repo, rClient, &config.Config{
-		JWT: config.JWTConfig{
-			Token:     jwtSecret,
-			ExpiresIn: 24 * time.Hour,
-		},
-	})
+	authHandler := handler.NewAuthHandler(repo, rClient, cfg)
 	r := gin.Default()
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -81,7 +75,7 @@ func StartServer() {
 		api.POST("/user/login", authHandler.Login)
 
 		protected := api.Group("/")
-		protected.Use(middleware.AuthMiddleware(jwtSecret, rClient))
+		protected.Use(middleware.AuthMiddleware(cfg.JWT.Token, rClient))
 		{
 			protected.GET("/composer/draft", h.GetComposerDraftAPI)
 			protected.POST("/composer", h.CreateComposerAPI)
@@ -93,5 +87,7 @@ func StartServer() {
 		}
 	}
 
-	r.Run(":8080")
+	if err := r.Run(net.JoinHostPort(cfg.ServiceHost, strconv.Itoa(cfg.ServicePort))); err != nil {
+		log.Fatalf("Не удалось запустить HTTP-сервер: %v", err)
+	}
 }

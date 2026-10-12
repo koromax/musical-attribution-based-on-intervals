@@ -3,20 +3,21 @@ package main
 import (
 	"log"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"interval_attribution/internal/app/config"
 	"interval_attribution/internal/app/ds"
 	"interval_attribution/internal/app/dsn"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("Предупреждение: .env файл не найден, используются стандартные переменные")
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Не удалось загрузить конфигурацию: %v", err)
 	}
 
-	db, err := gorm.Open(postgres.Open(dsn.FromEnv()), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn.FromConfig(cfg.Database)), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Ошибка подключения к БД: %v", err)
 	}

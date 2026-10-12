@@ -1,20 +1,21 @@
 package dsn
 
 import (
-	"fmt"
-	"os"
+	"net"
+	"net/url"
+	"strconv"
+
+	"interval_attribution/internal/app/config"
 )
 
-func FromEnv() string {
-	host := os.Getenv("DB_HOST")
-	if host == "" {
-		return ""
-	}
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	pass := os.Getenv("DB_PASS")
-	dbName := os.Getenv("DB_NAME")
-
-	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, pass, dbName)
+func FromConfig(cfg config.DatabaseConfig) string {
+	return (&url.URL{
+		Scheme: "postgres",
+		User:   url.UserPassword(cfg.User, cfg.Password),
+		Host:   net.JoinHostPort(cfg.Host, strconv.Itoa(cfg.Port)),
+		Path:   cfg.Name,
+		RawQuery: url.Values{
+			"sslmode": []string{"disable"},
+		}.Encode(),
+	}).String()
 }
