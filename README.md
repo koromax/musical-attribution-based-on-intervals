@@ -12,6 +12,13 @@
             Вид кнопки: 180x50px, fill #7d60ff, no stroke, border-radius: 2px
 - названия в коде: composers
 
+ЛР-3
++ сделать пояснения по исправлениям 
++ скрины сделать нормального размера
++ ГДЕ первый скрин 10 методов 
++ плитка, поле 0/1 назови адекватнее 
++ почему поля url пустые? ЭТО ВООБЩЕ ВОЗМОЖНО
+
 ---
 
 #### Лабораторная 3
@@ -52,28 +59,28 @@
 
 ## 1. Таблицы базы данных
 
-### 1.1. Таблица `users` (Пользователи)
+### 1.1. Таблица `composers` (Услуги/композиторы)
 | Поле | Тип данных | Ограничения | Описание |
 | :--- | :--- | :--- | :--- |
-| `id` | `BIGSERIAL` | PRIMARY KEY | Уникальный идентификатор |
-| `login` | `VARCHAR(255)` | UNIQUE, NOT NULL | Логин пользователя |
-| `password` | `VARCHAR(255)` | NOT NULL | Пароль |
-| `is_moderator` | `BOOLEAN` | DEFAULT false | Флаг модератора |
+| `id` | `INTEGER` | PRIMARY KEY | Уникальный идентификатор |
+| `name` | `VARCHAR(100)` | NOT NULL | Имя композитора |
+| `description` | `VARCHAR(512)` | | Описание |
+| `status` | `VARCHAR(9)` | *NOT NULL* DEFAULT 'draft' | Статус (`draft`, `published`, `deleted`) |
+| `image_url` | `VARCHAR(255)` | *NOT NULL* DEFAULT | Ссылка на изображение в MinIO |
+| `video_url` | `VARCHAR(255)` | *NOT NULL* DEFAULT | Ссылка на видео в MinIO |
+| `freq1` | `NUMERIC(5, 2)` | | Первая частотность |
+| `freq2` | `NUMERIC(5, 2)` | | Вторая частотность |
+| `date_create` | `TIMESTAMP` | DEFAULT now() | Дата и время создания записи |
+| `creator_id` | `INTEGER` | FOREIGN KEY (`users.id`) | Идентификатор создателя |
+| `date_formed` | `TIMESTAMP` | | Дата публикации записи |
 
-### 1.2. Таблица `composers` (Услуги/композиторы)
+### 1.2. Таблица `users` (Пользователи)
 | Поле | Тип данных | Ограничения | Описание |
 | :--- | :--- | :--- | :--- |
-| `id` | `BIGSERIAL` | PRIMARY KEY | Уникальный идентификатор |
-| `name` | `VARCHAR(255)` | NOT NULL | Имя композитора |
-| `description` | `TEXT` | | Описание |
-| `status` | `VARCHAR(32)` | DEFAULT 'draft' | Статус (`draft`, `published`, `deleted`) |
-| `image_url` | `VARCHAR(512)` | | Ссылка на изображение в MinIO |
-| `video_url` | `VARCHAR(512)` | | Ссылка на видео в MinIO |
-| `freq1` | `NUMERIC` | | Первая частотность |
-| `freq2` | `NUMERIC` | | Вторая частотность |
-| `date_create` | `TIMESTAMPTZ` | DEFAULT now() | Дата и время создания записи |
-| `creator_id` | `BIGINT` | FOREIGN KEY (`users.id`) | Идентификатор создателя |
-| `date_formed` | `TIMESTAMPTZ` | | Дата публикации записи |
+| `id` | `INTEGER` | PRIMARY KEY | Уникальный идентификатор |
+| `login` | `VARCHAR(32)` | UNIQUE, NOT NULL | Логин пользователя |
+| `password` | `VARCHAR(32)` | NOT NULL | Пароль |
+| `is_moderator` | `BOOLEAN` | DEFAULT false | Флаг модератора |
 
 > **Виртуальное поле (не хранится в БД):**
 > * `is_creator` (`BOOLEAN`): Вычисляется на бэкенде. Возвращает `true`, если текущий пользователь из синглтона является автором записи.
@@ -81,9 +88,9 @@
 ### 1.3. Таблица `composer_likes` (Лайки услуг)
 | Поле | Тип данных | Ограничения | Описание |
 | :--- | :--- | :--- | :--- |
-| `id` | `BIGSERIAL` | PRIMARY KEY | Уникальный идентификатор |
-| `user_id` | `BIGINT` | FOREIGN KEY (`users.id`) | Идентификатор пользователя |
-| `composer_id` | `BIGINT` | FOREIGN KEY (`composers.id`) | Идентификатор композитора |
+| `id` | `INTEGER` | PRIMARY KEY | Уникальный идентификатор |
+| `user_id` | `INTEGER` | FOREIGN KEY (`users.id`) | Идентификатор пользователя |
+| `composer_id` | `INTEGER` | FOREIGN KEY (`composers.id`) | Идентификатор композитора |
 
 ---
 
